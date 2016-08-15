@@ -253,11 +253,16 @@ When ARG isn't nil, show table of contents."
     (backward-up-list)
     (point)))
 
+(defun ciao-next-top-level-sexp ()
+  (forward-char 1)
+  (re-search-forward "^[^ \n}]" (lispy--outline-end) t)
+  (forward-char -1))
+
 (defun ciao-down (arg)
   (interactive "p")
   (cond ((lpy-line-left-p)
          (if (bolp)
-             (lpy-next-top-level-sexp)
+             (ciao-next-top-level-sexp)
            (let ((end (ciao-parent-end-position))
                  (indent (buffer-substring-no-properties
                           (line-beginning-position)
@@ -277,7 +282,7 @@ When ARG isn't nil, show table of contents."
   (interactive "p")
   (cond ((lpy-line-left-p)
          (if (bolp)
-             (re-search-backward "^[^ \n]" (lispy--outline-beg) t)
+             (re-search-backward "^[^ \n}]" (lispy--outline-beg) t)
            (let ((beg (ciao-parent-beg-position))
                  (indent (buffer-substring-no-properties
                           (line-beginning-position)
@@ -309,10 +314,12 @@ When ARG isn't nil, show table of contents."
            (move-beginning-of-line 1)))
         ((looking-at lispy-outline)
          (lispy-outline-left))
-        ((or (ciao-leftp)
-             (ciao-rightp))
-         (when (ciao-out-forward 1)
-           (backward-list 1)))))
+        (t
+         (unless (bolp)
+           (let ((pt (point)))
+             (condition-case nil
+                 (backward-up-list)
+               (error (goto-char pt))))))))
 
 (defun ciao-right ()
   (interactive)
@@ -320,7 +327,13 @@ When ARG isn't nil, show table of contents."
          (ciao-left)
          (exchange-point-and-mark))
         ((looking-at lispy-outline)
-         (lispy-outline-right))))
+         (lispy-outline-right))
+        ((lpy-line-left-p)
+         (let* ((cur-offset (current-column))
+                (new-offset (+ cur-offset c-basic-offset))
+                (regex (concat "^" (make-string new-offset ?\ ))))
+           (when (re-search-forward regex nil t)
+             (backward-char))))))
 
 (defun ciao-to ()
   (interactive)
