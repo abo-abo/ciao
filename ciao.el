@@ -190,11 +190,6 @@ When ARG isn't nil, show table of contents."
          (lispy--mark
           (cons (line-beginning-position)
                 (line-end-position))))
-        ((looking-at "$")
-         (lispy--mark
-          (cons (line-beginning-position)
-                (line-end-position)))
-         (exchange-point-and-mark))
         (t
          (lispy-mark-symbol))))
 
