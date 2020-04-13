@@ -321,7 +321,11 @@ When ARG isn't nil, show table of contents."
          (unless (bolp)
            (let ((pt (point)))
              (condition-case nil
-                 (backward-up-list)
+                 (progn
+                   (backward-up-list)
+                   (back-to-indentation)
+                   (unless (bolp)
+                     (backward-char)))
                (error (goto-char pt))))))))
 
 (defun ciao-right ()
