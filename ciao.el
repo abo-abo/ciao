@@ -336,7 +336,7 @@ When ARG isn't nil, show table of contents."
         ((looking-at lispy-outline)
          (lispy-outline-right))
         ((lpy-line-left-p)
-         (let* ((cur-offset (current-column))
+         (let* ((cur-offset (if (bolp) 0 (1+ (current-column))))
                 (new-offset (+ cur-offset c-basic-offset))
                 (regex (concat "^" (make-string new-offset ?\ ))))
            (when (re-search-forward regex nil t)
