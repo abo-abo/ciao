@@ -354,8 +354,8 @@ When ARG isn't nil, show table of contents."
 
 (defun ciao-exprp ()
   (unless (eolp)
-    (or (bolp)
-        (and (looking-at " ")
+    (or (and (bolp) (not (eq (char-after) 32)))
+        (and (looking-at " [^ ]")
              (looking-back "^ *" (line-beginning-position))))))
 
 (defsubst ciao-rightp ()
