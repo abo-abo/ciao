@@ -378,7 +378,7 @@ When ARG isn't nil, show table of contents."
       (delete-region
        (region-beginning)
        (region-end))
-    (c-electric-delete-forward 1)))
+    (delete-char arg)))
 
 (defun ciao-eval ()
   (interactive)
