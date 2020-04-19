@@ -393,15 +393,30 @@ When ARG isn't nil, show table of contents."
                             c-macro-cppflags) t)))))
       (message (string-trim expansion)))))
 
+(defun ciao-top-p ()
+  (and (bolp)
+       (not
+        (or
+         (eolp)
+         (looking-at "}")))))
+
+(defun ciao-end-of-defun-position ()
+  (save-excursion
+    (let (tag)
+      (cond ((looking-at "#")
+             (end-of-line)
+             (while (eq (char-before) 92)
+               (end-of-line 2))
+             (point))
+            ((and (setq tag (semantic-current-tag))
+                  (semantic-tag-end tag)))))))
+
 (defun ciao-mark ()
   (interactive)
   (cond ((region-active-p)
          (deactivate-mark))
-        ((ciao-leftp)
-         (lispy--mark (lispy--bounds-dwim)))
-        ((ciao-rightp)
-         (lispy--mark (lispy--bounds-dwim))
-         (exchange-point-and-mark))))
+        ((ciao-top-p)
+         (set-mark (ciao-end-of-defun-position)))))
 
 (defun ciao--outlinep ()
   (looking-at "//\\*"))
