@@ -433,14 +433,6 @@ Otherwise call `self-insert-command'."
            ((lispy--in-string-or-comment-p)
 
             (call-interactively ',(or (plist-get plist :self-insert) 'self-insert-command)))
-
-           ((or
-             (ciao-exprp)
-             (ciao-leftp)
-             (ciao-rightp)
-             (and (looking-back "^ *")
-                  (looking-at "//")))
-            (call-interactively ',def))
            (t
             (call-interactively ',(or (plist-get plist :self-insert) 'self-insert-command))))))
 
